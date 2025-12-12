@@ -14,20 +14,20 @@ void processInput(GLFWwindow* window, float radYaw, float radPitch){
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-		camX += -sin(radYaw) * speed;
-		camZ += -cosf(radYaw) * speed;
+		camX += dirX * speed;
+		camZ += dirZ * speed;
 	}
 	if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-		camX -= -sinf(radYaw) * speed;
-		camZ -= -cosf(radYaw) * speed;
+		camX -= dirX * speed;
+		camZ -= dirZ * speed;
 	}
 	if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-		camX += cosf(radYaw) * speed;
-		camZ += -sinf(radYaw) * speed;
+		camX -= dirZ * speed;
+		camZ += dirX * speed;
 	}
 	if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-		camX -= cosf(radYaw) * speed;
-		camZ -= -sinf(radYaw) * speed;
+		camX += dirZ * speed;
+		camZ -= dirX * speed;
 	}
 
 	if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
@@ -40,10 +40,49 @@ void processInput(GLFWwindow* window, float radYaw, float radPitch){
 
 
 
+void lookAt(float eyeX, float eyeY, float eyeZ,
+            float centerX, float centerY, float centerZ,
+            float upX, float upY, float upZ)
+{
+    float fX = centerX - eyeX;
+    float fY = centerY - eyeY;
+    float fZ = centerZ - eyeZ;
+
+    // normaliza forward
+    float fLen = sqrt(fX*fX + fY*fY + fZ*fZ);
+    fX /= fLen; fY /= fLen; fZ /= fLen;
+
+    // normaliza up
+    float upLen = sqrt(upX*upX + upY*upY + upZ*upZ);
+    upX /= upLen; upY /= upLen; upZ /= upLen;
+
+    // right = forward × up
+    float rX = fY * upZ - fZ * upY;
+    float rY = fZ * upX - fX * upZ;
+    float rZ = fX * upY - fY * upX;
+
+    // new up = right × forward
+    float uX = rY * fZ - rZ * fY;
+    float uY = rZ * fX - rX * fZ;
+    float uZ = rX * fY - rY * fX;
+
+    float m[16] = {
+        rX,  uX, -fX, 0,
+        rY,  uY, -fY, 0,
+        rZ,  uZ, -fZ, 0,
+        0,   0,   0,  1
+    };
+
+    glMultMatrixf(m);
+    glTranslatef(-eyeX, -eyeY, -eyeZ);
+}
+
+
+
 
 int main() {
 	glfwInit();
-	GLFWwindow* window = glfwCreateWindow(800, 450, "Janela", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Janela", glfwGetPrimaryMonitor(), NULL);
 	glfwMakeContextCurrent(window);
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -80,7 +119,7 @@ int main() {
 		float radYaw = yaw * 3.14159f / 180.f;
 		float radPitch = pitch * 3.14159f / 180.f;
 		
-		dirX = cosf(radPitch) * cosf(radYaw);
+		dirX = cosf(radYaw) * cosf(radPitch);
 		dirY = sinf(radPitch);
 		dirZ = sinf(radYaw) * cosf(radPitch);
 
@@ -95,9 +134,9 @@ int main() {
 		
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glRotatef(-yaw, 0, 1, 0);
-		glRotatef(-pitch, 1, 0, 0);
-		glTranslatef(-camX, -camY, -camZ);
+		lookAt(camX, camY, camZ,
+       camX + dirX, camY + dirY, camZ + dirZ,
+       0, 1, 0);
 
 		glPushMatrix();
 		glTranslatef(-3.f, 1, -5);
