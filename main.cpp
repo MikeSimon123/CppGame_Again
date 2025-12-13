@@ -205,6 +205,36 @@ int main() {
 		createCube(5, cores);
 		glPopMatrix();
 
+		glPushMatrix();
+		glTranslatef(-20, 5, -20);
+		glBegin(GL_TRIANGLES);
+			glColor3f(0.3f, 0.65f, 0.87f);
+			glVertex3f(0, 0, 0);
+			glVertex3f(-4, 0, 0);
+			glVertex3f(-2, 5, -3);
+
+			glColor3f(0.45f, 0.12f, 0.98f);
+			glVertex3f(0, 0, 0);
+			glVertex3f(-2, 0, -6);
+			glVertex3f(-2, 5, -3);
+
+			glColor3f(0.12f, 0.45f, 0.38f);
+			glVertex3f(-2, 0, -6);
+			glVertex3f(-4, 0, 0);
+			glVertex3f(-2, 5, -3);
+
+			glColor3f(0.6f, 0.87f, 0.32f);
+			glVertex3f(-4, 0, 0);
+			glVertex3f(-2, 0, -6);
+			glVertex3f(0, 0, 0);
+		glEnd();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(30, 5, 10);
+		createCube(10, cores);
+		glPopMatrix();
+
 		glfwSwapBuffers(window);
 	}
 	glfwTerminate();
