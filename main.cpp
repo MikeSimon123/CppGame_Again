@@ -1,4 +1,4 @@
-#include <GLFW/glfw3.h>
+﻿#include <GLFW/glfw3.h>
 #include <cmath>
 
 float dirX, dirY, dirZ;
@@ -36,6 +36,43 @@ void processInput(GLFWwindow* window, float radYaw, float radPitch){
 	if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
 		camY -= speed;
 	}
+}
+
+void createCube(float tamanho, float cores[18]){
+	glBegin(GL_QUADS);
+		float x = 0, y = 0, z = 0;
+		glColor3f(cores[0], cores[1], cores[2]);
+		glVertex3f(x, y, z);
+		glVertex3f(x-tamanho, y, z);
+		glVertex3f(x-tamanho, y-tamanho, z);
+		glVertex3f(x, y-tamanho, z);
+		glColor3f(cores[3], cores[4], cores[5]);
+		glVertex3f(x, y, z-tamanho);
+		glVertex3f(x-tamanho, y, z-tamanho);
+		glVertex3f(x-tamanho, y-tamanho, z-tamanho);
+		glVertex3f(x, y-tamanho, z-tamanho);
+		glColor3f(cores[6], cores[7], cores[8]);
+		glVertex3f(x-tamanho, y, z);
+		glVertex3f(x-tamanho, y, z-tamanho);
+		glVertex3f(x-tamanho, y-tamanho, z-tamanho);
+		glVertex3f(x-tamanho, y-tamanho, z);
+		glColor3f(cores[9], cores[10], cores[11]);
+		glVertex3f(x, y, z);
+		glVertex3f(x, y, z-tamanho);
+		glVertex3f(x, y-tamanho, z-tamanho);
+		glVertex3f(x, y-tamanho, z);
+		glColor3f(cores[12], cores[13], cores[14]);
+		glVertex3f(x, y, z);
+		glVertex3f(x, y, z-tamanho);
+		glVertex3f(x-tamanho, y, z-tamanho);
+		glVertex3f(x-tamanho, y, z);
+		glColor3f(cores[15], cores[16], cores[17]);
+		glVertex3f(x, y-tamanho, z);
+		glVertex3f(x, y-tamanho, z-tamanho);
+		glVertex3f(x-tamanho, y-tamanho, z-tamanho);
+		glVertex3f(x-tamanho, y-tamanho, z);
+
+	glEnd();
 }
 
 
@@ -82,7 +119,7 @@ void lookAt(float eyeX, float eyeY, float eyeZ,
 
 int main() {
 	glfwInit();
-	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Janela", glfwGetPrimaryMonitor(), NULL);
+	GLFWwindow* window = glfwCreateWindow(1024, 600, "Janela", glfwGetPrimaryMonitor(), NULL);
 	glfwMakeContextCurrent(window);
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -137,55 +174,35 @@ int main() {
 		lookAt(camX, camY, camZ,
        camX + dirX, camY + dirY, camZ + dirZ,
        0, 1, 0);
+		
+		float cores[18] = {
+			0.3f, 0.2f, 0.65f,
+			0.43f, 0.32f, 0.87f,
+			0.45f, 0.77f, 0.32f,
+			0.32f, 0.87f, 0.2f,
+			0.87f, 0.45f, 0.32f,
+			0.45f, 0.12f, 0.87f
+	
+		};
 
 		glPushMatrix();
-		glTranslatef(-3.f, 1, -5);
+		glTranslatef(-3.f, 1, 7);
+		createCube(4, cores);
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslatef(-7, 1, 10);
+		createCube(6, cores);
+		glPopMatrix();
 		
+		glPushMatrix();
+		glTranslatef(-3, 1, -5);
+		createCube(5, cores);
+		glPopMatrix();
 
-		glBegin(GL_QUADS);
-
-			//frente
-			glColor3f(0.3f, 0.1f, 0.75f);
-			glVertex3f(-0.5f, -0.5f, 0.5f);
-			glVertex3f(0.5f, -0.5f, 0.5f);
-			glVertex3f(0.5f, 0.5f, 0.5f);
-			glVertex3f(-0.5f, 0.5f, 0.5f);
-			
-			//tras
-			glColor3f(0.54f, 0.2f, 0.98f);
-			glVertex3f(-0.5f, -0.5f, -0.5f);
-			glVertex3f(0.5f, -0.5f, -0.5f);
-			glVertex3f(0.5f, 0.5f, -0.5f);
-			glVertex3f(-0.5f, 0.5f, -0.5f);
-			
-			//esquerda
-			glColor3f(0.1f, 0.3f, 0.87f);
-			glVertex3f(-0.5f, -0.5f, -0.5f);
-			glVertex3f(-0.5f, -0.5f, 0.5f);
-			glVertex3f(-0.5f, 0.5f, 0.5f);
-			glVertex3f(-0.5f, 0.5f, -0.5f);
-			
-			//direita
-			glColor3f(0.33f, 0.12f, 0.76f);
-			glVertex3f(0.5f, -0.5f, -0.5f);
-			glVertex3f(0.5f, -0.5f, 0.5f);
-			glVertex3f(0.5f, 0.5f, 0.5f);
-			glVertex3f(0.5f, 0.5f, -0.5f);
-			
-			//topo
-			glColor3f(0.66f, 0.44f, 0.76f);
-			glVertex3f(-0.5f, 0.5f, -0.5f);
-			glVertex3f(0.5f, 0.5f, -0.5f);
-			glVertex3f(0.5f, 0.5f, 0.5f);
-			glVertex3f(-0.5f, 0.5f, 0.5f);
-			
-			//base
-			glColor3f(1.0f, 0.3f, 0.8f);
-			glVertex3f(-0.5f, -0.5f, -0.5f);
-			glVertex3f(0.5f, -0.5f, -0.5f);
-			glVertex3f(0.5f, -0.5f, 0.5f);
-			glVertex3f(-0.5f, -0.5f, 0.5f);
-		glEnd();
+		glPushMatrix();
+		glTranslatef(12, 1, -8);
+		createCube(5, cores);
 		glPopMatrix();
 
 		glfwSwapBuffers(window);
